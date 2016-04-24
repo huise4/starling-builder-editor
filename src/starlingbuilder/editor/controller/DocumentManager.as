@@ -26,6 +26,8 @@ package starlingbuilder.editor.controller
     import starlingbuilder.editor.helper.SnapshotHelper;
     import starlingbuilder.editor.history.CompositeHistoryOperation;
     import starlingbuilder.editor.ui.CenterPanel;
+    import starlingbuilder.editor.upgrade.LayoutVersion;
+    import starlingbuilder.engine.IAssetMediator;
     import starlingbuilder.util.KeyboardWatcher;
     import starlingbuilder.editor.helper.PixelSnapper;
     import starlingbuilder.editor.helper.PixelSnapperData;
@@ -71,7 +73,7 @@ package starlingbuilder.editor.controller
     import starling.text.TextField;
     import starling.utils.AssetManager;
 
-    public class DocumentManager extends EventDispatcher implements IUIEditorThemeMediator
+    public class DocumentManager extends EventDispatcher implements IUIEditorThemeMediator, IComponentRenderSupport
     {
         private var _assetManager:AssetManager;
         private var _uiBuilder:IUIBuilder;
@@ -668,6 +670,11 @@ package starlingbuilder.editor.controller
             return _historyManager;
         }
 
+        public function get assetMediator():IAssetMediator
+        {
+            return _assetMediator;
+        }
+
         public function selectObjectAtIndex(index:int):void
         {
             var item:Object = _dataProvider.getItemAt(index);
@@ -711,7 +718,7 @@ package starlingbuilder.editor.controller
         {
             _testContainer.removeChildren(0, -1, true);
 
-            var data:Object = _uiBuilder.save(_layoutContainer, _extraParamsDict, TemplateData.editor_template);
+            var data:Object = _uiBuilder.save(_layoutContainer, _extraParamsDict, LayoutVersion.VERSION, TemplateData.editor_template);
 
             var setting:Object = exportSetting();
 
@@ -743,7 +750,7 @@ package starlingbuilder.editor.controller
 
         public function export():Object
         {
-            return _uiBuilder.save(_layoutContainer, _extraParamsDict, exportSetting());
+            return _uiBuilder.save(_layoutContainer, _extraParamsDict, LayoutVersion.VERSION, exportSetting());
         }
 
         private function exportSetting():Object
